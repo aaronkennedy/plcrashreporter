@@ -43,6 +43,7 @@ static void print_usage () {
                     "      Covert a plcrash file to the given format.\n\n"
                     "      Supported formats:\n"
                     "        ios - Standard Apple iOS-compatible text crash log\n"
+                    "        mac - Suitable for symbolicate script\n"
                     "        iphone - Synonym for 'iOS'.\n");
 }
 
@@ -86,8 +87,10 @@ static int convert_command (int argc, char *argv[]) {
     
     /* Verify that the format is supported. Only one is actually supported currently */
     PLCrashReportTextFormat textFormat;
-    if (strcasecmp(format, "iphone") == 0 || strcasecmp(format, "ios")) {
+    if (strcasecmp(format, "iphone") == 0 || strcasecmp(format, "ios") == 0) {
         textFormat = PLCrashReportTextFormatiOS;
+    } else if (strcasecmp(format, "mac") == 0) {
+        textFormat = PLCrashReportTextFormatMac;
     } else {
         fprintf(stderr, "Unsupported format requested\n");
         print_usage();
@@ -127,7 +130,7 @@ int main (int argc, char *argv[]) {
 
     /* Convert command */
     if (strcmp(argv[1], "convert") == 0) {
-        ret = convert_command(argc - 2, argv + 2);
+        ret = convert_command(argc - 1, argv + 1);
     } else {
         print_usage();
         ret = 1;

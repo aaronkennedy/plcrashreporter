@@ -422,10 +422,29 @@ static NSInteger binaryImageSort(id binary1, id binary2, void *context);
         
         /* base_address - terminating_address [designator]file_name arch <uuid> file_path */
         NSString *fmt = nil;
-        if (lp64) {
-            fmt = @"%18#" PRIx64 " - %18#" PRIx64 " %@%@ %@  <%@> %@\n";
+
+        if (textFormat == PLCrashReportTextFormatMac && uuid) {
+            uuid = uuid.uppercaseString;
+            uuid = [NSString stringWithFormat: @"%@-%@-%@-%@-%@",
+                             [uuid substringWithRange: NSMakeRange(0, 8)],
+                             [uuid substringWithRange: NSMakeRange(8, 4)],
+                             [uuid substringWithRange: NSMakeRange(12, 4)],
+                             [uuid substringWithRange: NSMakeRange(16, 4)],
+                             [uuid substringWithRange: NSMakeRange(20, 12)]];
+        }
+
+        if (textFormat == PLCrashReportTextFormatMac) {
+            if (lp64) {
+                fmt = @"%18#" PRIx64 " - %18#" PRIx64 " %@%@ (%@)  <%@> %@\n";
+            } else {
+                fmt = @"%10#" PRIx64 " - %10#" PRIx64 " %@%@ (%@)  <%@> %@\n";
+            }
         } else {
-            fmt = @"%10#" PRIx64 " - %10#" PRIx64 " %@%@ %@  <%@> %@\n";
+            if (lp64) {
+                fmt = @"%18#" PRIx64 " - %18#" PRIx64 " %@%@ %@  <%@> %@\n";
+            } else {
+                fmt = @"%10#" PRIx64 " - %10#" PRIx64 " %@%@ %@  <%@> %@\n";
+            }
         }
 
         [text appendFormat: fmt,
